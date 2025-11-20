@@ -15,6 +15,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+
 
 # Application definition
 DJANGO_APPS = [
@@ -34,11 +39,13 @@ THIRD_PARTY_APPS = [
     "allauth.account",
     "allauth.headless",
     "allauth.socialaccount",
+    "corsheaders",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS + THIRD_PARTY_APPS
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -90,11 +97,57 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
 # allauth
 HEADLESS_ONLY = True
-ACCOUNT_LOGIN_METHODS = {"email"}
-ACCOUNT_SIGNUP_FIELDS = {"email*", "password1*", "password2*"}
-HEADLESS_TOKEN_STRATEGY = "allauth.headless.tokens.JWTTokenStrategy"
+HEADLESS_FRONTEND_URLS = {
+    "account_signup": "http://127.0.0.1:5173/signup",
+    "account_confirm_email": "http://127.0.0.1:5173/confirm/{key}",
+    "account_reset_password": "http://127.0.0.1:5173/password/reset",
+    "account_reset_password_from_key": "http://127.0.0.1:5173/password/reset/{key}",
+}
+
+ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_LOGIN_METHODS = ["email"]
+ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
+
+HEADLESS_TOKEN_STRATEGY = "allauth.headless.tokens.strategies.jwt.JWTTokenStrategy"
+HEADLESS_JWT_PRIVATE_KEY = """
+-----BEGIN PRIVATE KEY-----
+MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQChXxaJGfC8qXw9
+jvuBgBltG/GbVyLwzt4FdnvoKatUoEsjbWYw8MsyieysUfNTOrGwSBCrHlrH35Bt
+V4d8PqnaSz35r6yvozwLMBe3EP45vfoorCtfcKeEdiaLsARXJJTc8CH4A/3vFDDF
+DaBzcvpfENcLyKU508NhQaqvRkTc9LQP+n+WSIVWuVm6vuSNHbHTdjI3cgPxISg3
+BJ9KLmhc2zq+RGq6z9XHCGE6KuidrxgwRHDZx36wBaYxw9queYskBX3ShCi5zrrP
+hPk1Fj+K5QuQPeetMWD1ZQpKMr74VpeV3J9eim29CnsSeJ2oqELY5Z24NvJWAdX6
+jlWk5cibAgMBAAECggEACcP1WyqktOYUzKzgb3/PChlMz7fAN45tRStcaDpNUfu5
+UFWIf6GyykYqemsjLIA6zI4v5AscN0hCNzu6yTwJj1pKT9ffvWlFcu/gH4X5vIjQ
+oLF6lnX8zTlRL9bhDFz8XTpy881aCqPQJ7yhXxswJ5yfRulHhm5YPoR4zc6U0EIu
+Au1LJiU2I9SrMWxsr3JIl+HOcpdIP04qcH7rF3IERG0ZrHVbizzTajynJAgkX7js
+Kms69qgHkVnMJnMA5+K+IkAOqcuLCOgdOkD3rsnqNhG+oU8Er2edTiSWa+o1robV
+7BWyngeTs/RDB8MIgK4VBLS8JMRp0XcJNvRGCPegkQKBgQDgYtPSMTVvPcJYthfV
+GTC9RUOA7jEQc5IsTFY+TfXYBe10NuxrbjUuGdUtCZudOPkU6LmmbZcG2Gcx0CYy
+ml4oAx8YzNtLG/tewgbsxI/Pl6SGhXls13HZWT2Ctgi5ZuPYAmf384LSWkv08se9
+euokITDqPXu2G54tscebZ8NBPwKBgQC4G3HvqHCp2MBUaLpJ8TdxH6o3ImmxGLT0
+g/YN88ISLtIDXKzQZgMug8FhVF2x58pJzyIh9ToBwhnGV5nTRMyi97SiGDx/3OFL
+HgEWIzjJB0PUwZeN6f9CCsw4qvk/vlc4vS279lAtS8RmGysdIZHb7GS8KTwqa6Y6
+S0MdDBmFpQKBgQDbS3rdKD6i02cHMB+mopHhyLmqXiARhgHLzWdUSPkGAPUK6Uqx
+y+mpfpG7DHLLe4zjhHc8UkqR5Bkms9lBB2ESFcrkgAGqLFTFTTdbWtd5+ShQWE5N
+s1mPJApbnvBz0jzHNcLKr3ChiKJHaKcRZflDCjU2GJS5a9BxtBfyp7xKHQKBgGr6
+96/tTtpDKy9hU66XzkGbxssW4heYZb4X2CivVjw+nKZ7eaf3Py4OPZaS8YbpS7Cr
+/geBed1/rn6EdMxBFDA2g+4U60LZVMjTfIoimWKnKBE/FRPPvxXfNGBRaVhTAFfm
+BedM77YCavNyIhFhamJC8R4tT9rOht8k0LDWURZJAoGBAK9t2JEH6ZnK5SwtA59d
+el8NnpodHvF1XErDLPCafK7cP5xOdPJ0PVYdsjUhA8iiQy6nLn00VmRv6OXenOqa
+ZJ/rgsnedLYc+qlmFrZRDqhvgqrpBkQojpTlBL6/5nPaGe6ONHsPxeKWJidTgWfe
+tubZOXUFnPTVcbQsrB1hryFS
+-----END PRIVATE KEY-----
+"""
+
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+)
 
 LANGUAGE_CODE = "en-us"
 

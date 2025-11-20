@@ -19,7 +19,6 @@ class Expense(models.Model):
         Category,
         on_delete=models.SET_NULL,
         related_name="expenses",
-        unique=True,
         null=True,
         blank=True,
     )
