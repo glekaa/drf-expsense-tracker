@@ -92,6 +92,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # allauth
 HEADLESS_ONLY = True
+ACCOUNT_LOGIN_METHODS = {"email"}
+ACCOUNT_SIGNUP_FIELDS = {"email*", "password1*", "password2*"}
+HEADLESS_TOKEN_STRATEGY = "allauth.headless.tokens.JWTTokenStrategy"
 
 LANGUAGE_CODE = "en-us"
 
