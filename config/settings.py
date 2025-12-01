@@ -1,3 +1,4 @@
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -19,6 +20,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
 ]
+
+CORS_ALLOW_CREDENTIALS = True
 
 
 # Application definition
@@ -79,6 +82,14 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
+    }
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
     }
 }
 
@@ -143,6 +154,7 @@ ZJ/rgsnedLYc+qlmFrZRDqhvgqrpBkQojpTlBL6/5nPaGe6ONHsPxeKWJidTgWfe
 tubZOXUFnPTVcbQsrB1hryFS
 -----END PRIVATE KEY-----
 """
+HEADLESS_JWT_ACCESS_TOKEN_EXPIRES_IN = timedelta(days=7).total_seconds()
 
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",

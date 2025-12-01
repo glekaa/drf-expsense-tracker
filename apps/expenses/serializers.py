@@ -4,9 +4,13 @@ from .models import Category, Expense
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    total_spent = serializers.DecimalField(
+        max_digits=10, decimal_places=2, read_only=True
+    )
+
     class Meta:
         model = Category
-        fields = ["id", "name"]
+        fields = ["id", "name", "total_spent"]
 
 
 class ExpenseSerializer(serializers.ModelSerializer):
